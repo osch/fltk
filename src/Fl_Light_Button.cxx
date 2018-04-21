@@ -29,7 +29,20 @@
 #include <FL/fl_draw.H>
 #include "flstring.h"
 
+Fl_Light_Button::Handle_F* Fl_Light_Button::overridden_handle = NULL;
+Fl_Light_Button::Draw_F*   Fl_Light_Button::overridden_draw   = NULL;
+
 void Fl_Light_Button::draw() {
+  if (overridden_draw == NULL) {
+    return default_draw();
+  } else {
+    return overridden_draw(this);
+  }
+}
+void Fl_Light_Button::override_draw(Draw_F* draw_f) {
+  Fl_Light_Button::overridden_draw = draw_f;
+}
+void Fl_Light_Button::default_draw() {
   if (box()) draw_box(this==Fl::pushed() ? fl_down(box()) : box(), color());
   Fl_Color col = value() ? (active_r() ? selection_color() :
                             fl_inactive(selection_color())) : color();
@@ -140,6 +153,16 @@ void Fl_Light_Button::draw() {
 }
 
 int Fl_Light_Button::handle(int event) {
+    if (overridden_handle == NULL) {
+        return default_handle(event);
+    } else {
+        return overridden_handle(this, event);
+    }
+}
+void Fl_Light_Button::override_handle(Handle_F* handle_f) {
+  Fl_Light_Button::overridden_handle = handle_f;
+}
+int Fl_Light_Button::default_handle(int event) {
   switch (event) {
   case FL_RELEASE:
     if (box()) redraw();

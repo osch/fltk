@@ -75,10 +75,22 @@ class Fl_Widget_Tracker;
 
 class FL_EXPORT Fl_Button : public Fl_Widget {
 
+protected:
+  typedef int  Handle_F(Fl_Button* w, int);
+  typedef void Draw_F(Fl_Button* w);
+
+private:
+  
+  static Draw_F*   overridden_draw;
+  static Handle_F* overridden_handle;
+  
   int shortcut_;
   char value_;
   char oldval;
   uchar down_box_;
+
+  void default_draw();
+  int default_handle(int);
 
 protected:
 
@@ -87,7 +99,16 @@ protected:
   void simulate_key_action();
 
   virtual void draw();
+  static void override_draw(Draw_F* draw_f);
+  static void default_draw(Fl_Button* w) {
+    w->default_draw();
+  }
 
+  static void override_handle(Handle_F* handle_f);
+  static int default_handle(Fl_Button* w, int event) {
+    return w->default_handle(event);
+  }
+  
 public:
 
   virtual int handle(int);

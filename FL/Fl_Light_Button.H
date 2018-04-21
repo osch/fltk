@@ -37,7 +37,23 @@
 */
 class FL_EXPORT Fl_Light_Button : public Fl_Button {
 protected:
+    typedef int  Handle_F(Fl_Light_Button* w, int);
+    typedef void Draw_F(Fl_Light_Button* w);
+private:
+    static Draw_F*   overridden_draw;
+    static Handle_F* overridden_handle;
+    void default_draw();
+    int default_handle(int);
+protected:
     virtual void draw();
+    static void override_draw(Draw_F* draw_f);
+    static void default_draw(Fl_Light_Button* w) {
+      w->default_draw();
+    }
+    static void override_handle(Handle_F* handle_f);
+    static int default_handle(Fl_Light_Button* w, int event) {
+      return w->default_handle(event);
+    }
 public:
     virtual int handle(int);
     Fl_Light_Button(int x,int y,int w,int h,const char *l = 0);

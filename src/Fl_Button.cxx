@@ -25,6 +25,9 @@
 #include <FL/Fl_Toggle_Button.H>
 
 
+Fl_Button::Handle_F* Fl_Button::overridden_handle = NULL;
+Fl_Button::Draw_F*   Fl_Button::overridden_draw   = NULL;
+
 Fl_Widget_Tracker *Fl_Button::key_release_tracker = 0;
 
 
@@ -67,6 +70,16 @@ void Fl_Button::setonly() { // set this radio button on, turn others off
 }
 
 void Fl_Button::draw() {
+  if (overridden_draw == NULL) {
+    return default_draw();
+  } else {
+    return overridden_draw(this);
+  }
+}
+void Fl_Button::override_draw(Draw_F* draw_f) {
+  Fl_Button::overridden_draw = draw_f;
+}
+void Fl_Button::default_draw() {
   if (type() == FL_HIDDEN_BUTTON) return;
   Fl_Color col = value() ? selection_color() : color();
   draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);
@@ -81,6 +94,16 @@ void Fl_Button::draw() {
 }
 
 int Fl_Button::handle(int event) {
+    if (overridden_handle == NULL) {
+        return default_handle(event);
+    } else {
+        return overridden_handle(this, event);
+    }
+}
+void Fl_Button::override_handle(Handle_F* handle_f) {
+  Fl_Button::overridden_handle = handle_f;
+}
+int Fl_Button::default_handle(int event) {
   int newval;
   switch (event) {
   case FL_ENTER: /* FALLTHROUGH */
