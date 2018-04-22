@@ -3888,7 +3888,7 @@ int Fl_Text_Display::handle(int event) {
         if (Fl::event_inside(text_area.x, text_area.y, text_area.w,
 	                     text_area.h)) window()->cursor(FL_CURSOR_INSERT);
 	else window()->cursor(FL_CURSOR_DEFAULT);
-	return 1;
+	return Fl_Group::handle(event); // let this event also be handled by scrollbars
       } else {
         return 0;
       }
@@ -3898,7 +3898,7 @@ int Fl_Text_Display::handle(int event) {
       if (active_r() && window()) {
         window()->cursor(FL_CURSOR_DEFAULT);
 
-	return 1;
+	return Fl_Group::handle(event); // let this event also be handled by scrollbars
       } else {
 	return 0;
       }
