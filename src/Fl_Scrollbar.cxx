@@ -26,6 +26,9 @@
 #define INITIALREPEAT .5
 #define REPEAT .05
 
+Fl_Scrollbar::Handle_F* Fl_Scrollbar::overridden_handle = NULL;
+Fl_Scrollbar::Draw_F*   Fl_Scrollbar::overridden_draw   = NULL;
+
 void Fl_Scrollbar::increment_cb() {
   char inv = maximum()<minimum();
   int ls = inv ? -linesize_ : linesize_;
@@ -64,6 +67,16 @@ void Fl_Scrollbar::timeout_cb(void* v) {
 }
 
 int Fl_Scrollbar::handle(int event) {
+    if (overridden_handle == NULL) {
+        return default_handle(event);
+    } else {
+        return overridden_handle(this, event);
+    }
+}
+void Fl_Scrollbar::override_handle(Handle_F* handle_f) {
+  Fl_Scrollbar::overridden_handle = handle_f;
+}
+int Fl_Scrollbar::default_handle(int event) {
   // area of scrollbar:
   int area;
   int X=x(); int Y=y(); int W=w(); int H=h();
@@ -198,6 +211,16 @@ int Fl_Scrollbar::handle(int event) {
 }
 
 void Fl_Scrollbar::draw() {
+  if (overridden_draw == NULL) {
+    return default_draw();
+  } else {
+    return overridden_draw(this);
+  }
+}
+void Fl_Scrollbar::override_draw(Draw_F* draw_f) {
+  Fl_Scrollbar::overridden_draw = draw_f;
+}
+void Fl_Scrollbar::default_draw() {
   if (damage()&FL_DAMAGE_ALL) draw_box();
   int X = x()+Fl::box_dx(box());
   int Y = y()+Fl::box_dy(box());
