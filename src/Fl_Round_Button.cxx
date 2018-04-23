@@ -24,6 +24,8 @@
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Radio_Round_Button.H>
 
+Fl_Round_Button::Factory_F* Fl_Round_Button::factory_f = NULL;
+
 /**
   Creates a new Fl_Round_Button widget using the given position, size, and label string.
 
@@ -50,6 +52,12 @@ Fl_Round_Button::Fl_Round_Button(int X,int Y,int W,int H, const char *L)
   box(FL_NO_BOX);
   down_box(FL_ROUND_DOWN_BOX);
   selection_color(FL_FOREGROUND_COLOR);
+}
+
+
+Fl_Round_Button* Fl_Round_Button::create(int X, int Y, int W, int H, const char *L) {
+  if (factory_f) return factory_f(X, Y, W, H, L);
+  else return new Fl_Round_Button(X, Y, W, H, L);
 }
 
 /**

@@ -19,6 +19,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Check_Button.H>
 
+Fl_Check_Button::Factory_F* Fl_Check_Button::factory_f = NULL;
+
 /**
   \class Fl_Check_Button
   \brief A button with a "checkmark" to show its status.
@@ -54,3 +56,9 @@ Fl_Check_Button::Fl_Check_Button(int X, int Y, int W, int H, const char *L)
   down_box(FL_DOWN_BOX);
   selection_color(FL_FOREGROUND_COLOR);
 }
+
+Fl_Check_Button* Fl_Check_Button::create(int X, int Y, int W, int H, const char *L) {
+  if (factory_f) return factory_f(X, Y, W, H, L);
+  else return new Fl_Check_Button(X, Y, W, H, L);
+}
+

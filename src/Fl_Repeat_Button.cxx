@@ -22,6 +22,8 @@
 #define INITIALREPEAT .5
 #define REPEAT .1
 
+Fl_Repeat_Button::Factory_F* Fl_Repeat_Button::factory_f = NULL;
+
 void Fl_Repeat_Button::repeat_callback(void *v) {
   Fl_Button *b = (Fl_Button*)v;
   Fl::add_timeout(REPEAT,repeat_callback,b);
@@ -60,6 +62,11 @@ int Fl_Repeat_Button::handle(int event) {
 Fl_Repeat_Button::Fl_Repeat_Button(int X,int Y,int W,int H,const char *l)
 : Fl_Button(X,Y,W,H,l) 
 {
+}
+
+Fl_Repeat_Button* Fl_Repeat_Button::create(int X, int Y, int W, int H, const char *L) {
+  if (factory_f) return factory_f(X, Y, W, H, L);
+  else return new Fl_Repeat_Button(X, Y, W, H, L);
 }
 
 

@@ -36,11 +36,20 @@
   \image latex Fl_Light_Button.png "Fl_Light_Button" width=4cm
 */
 class FL_EXPORT Fl_Light_Button : public Fl_Button {
+public:
+    typedef Fl_Light_Button* Factory_F(int X, int Y, int W, int H, const char *L);
+private:
+  static Factory_F* factory_f;
 protected:
     virtual void draw();
 public:
     virtual int handle(int);
     Fl_Light_Button(int x,int y,int w,int h,const char *l = 0);
+
+    static void widget_factory(Factory_F* factory_f) {
+      Fl_Light_Button::factory_f = factory_f;
+    }
+    static Fl_Light_Button* create(int X, int Y, int W, int H, const char *L = 0);
 };
 
 #endif

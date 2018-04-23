@@ -31,6 +31,10 @@
   and depends on the implementation.
 */
 class FL_EXPORT Fl_Repeat_Button : public Fl_Button {
+public:
+  typedef Fl_Repeat_Button* Factory_F(int X, int Y, int W, int H, const char *L);
+private:
+  static Factory_F* factory_f;
   static void repeat_callback(void *);
 public:
   int handle(int);
@@ -41,6 +45,11 @@ public:
   */
   Fl_Repeat_Button(int X,int Y,int W,int H,const char *l=0);
 
+  static void widget_factory(Factory_F* factory_f) {
+    Fl_Repeat_Button::factory_f = factory_f;
+  }
+  static Fl_Repeat_Button* create(int X, int Y, int W, int H, const char *L = 0);
+  
   void deactivate() {
     Fl::remove_timeout(repeat_callback,this);
     Fl_Button::deactivate();

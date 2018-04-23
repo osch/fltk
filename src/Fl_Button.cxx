@@ -24,6 +24,7 @@
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Toggle_Button.H>
 
+Fl_Button::Factory_F* Fl_Button::factory_f = NULL;
 
 Fl_Widget_Tracker *Fl_Button::key_release_tracker = 0;
 
@@ -217,6 +218,11 @@ Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *L)
   value_ = oldval = 0;
   shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
+}
+
+Fl_Button* Fl_Button::create(int X, int Y, int W, int H, const char *L) {
+  if (factory_f) return factory_f(X, Y, W, H, L);
+  else return new Fl_Button(X, Y, W, H, L);
 }
 
 /**

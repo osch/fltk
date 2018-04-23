@@ -75,6 +75,12 @@ class Fl_Widget_Tracker;
 
 class FL_EXPORT Fl_Button : public Fl_Widget {
 
+public:
+    typedef Fl_Button* Factory_F(int X, int Y, int W, int H, const char *L);
+
+private:
+  static Factory_F* factory_f;
+  
   int shortcut_;
   char value_;
   char oldval;
@@ -93,6 +99,11 @@ public:
   virtual int handle(int);
 
   Fl_Button(int X, int Y, int W, int H, const char *L = 0);
+
+  static void widget_factory(Factory_F* factory_f) {
+    Fl_Button::factory_f = factory_f;
+  }
+  static Fl_Button* create(int X, int Y, int W, int H, const char *L = 0);
 
   int value(int v);
 

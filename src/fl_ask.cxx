@@ -97,9 +97,9 @@ static Fl_Window *makeform() {
  {
    for (int b=0, x=310; b<3; b++, x -= 100) {
      if (b==1)
-       button[b] = new Fl_Return_Button(x, 70, 90, 23);
+       button[b] = Fl_Return_Button::create(x, 70, 90, 23);
      else
-       button[b] = new Fl_Button(x, 70, 90, 23);
+       button[b] = Fl_Button::create(x, 70, 90, 23);
      button[b]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
      button[b]->callback(button_cb, b);
    }

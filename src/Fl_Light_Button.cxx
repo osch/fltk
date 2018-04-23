@@ -29,6 +29,8 @@
 #include <FL/fl_draw.H>
 #include "flstring.h"
 
+Fl_Light_Button::Factory_F* Fl_Light_Button::factory_f = NULL;
+
 void Fl_Light_Button::draw() {
   if (box()) draw_box(this==Fl::pushed() ? fl_down(box()) : box(), color());
   Fl_Color col = value() ? (active_r() ? selection_color() :
@@ -160,6 +162,10 @@ Fl_Light_Button::Fl_Light_Button(int X, int Y, int W, int H, const char* l)
   align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 }
 
+Fl_Light_Button* Fl_Light_Button::create(int X, int Y, int W, int H, const char *L) {
+  if (factory_f) return factory_f(X, Y, W, H, L);
+  else return new Fl_Light_Button(X, Y, W, H, L);
+}
 
 Fl_Radio_Light_Button::Fl_Radio_Light_Button(int X,int Y,int W,int H,const char *l)
 : Fl_Light_Button(X,Y,W,H,l) 

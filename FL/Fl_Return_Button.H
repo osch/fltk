@@ -31,6 +31,10 @@
   \image latex Fl_Return_Button.png "Fl_Return_Button" width=4cm
 */
 class FL_EXPORT Fl_Return_Button : public Fl_Button {
+public:
+    typedef Fl_Return_Button* Factory_F(int X, int Y, int W, int H, const char *L);
+private:
+  static Factory_F* factory_f;
 protected:
   void draw();
 public:
@@ -41,6 +45,10 @@ public:
     <P> The inherited destructor deletes the button.
   */
   Fl_Return_Button(int X, int Y, int W, int H,const char *l=0);
+  static void widget_factory(Factory_F* factory_f) {
+    Fl_Return_Button::factory_f = factory_f;
+  }
+  static Fl_Return_Button* create(int X, int Y, int W, int H, const char *L = 0);
 };
 
 #endif

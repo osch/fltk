@@ -20,6 +20,8 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/fl_draw.H>
 
+Fl_Return_Button::Factory_F* Fl_Return_Button::factory_f = NULL;
+
 int fl_return_arrow(int x, int y, int w, int h) {
   int size = w; if (h<size) size = h;
   int d = (size+2)/4; if (d<3) d = 3;
@@ -65,6 +67,12 @@ Fl_Return_Button::Fl_Return_Button(int X, int Y, int W, int H,const char *l)
 : Fl_Button(X,Y,W,H,l) 
 {
 }
+
+Fl_Return_Button* Fl_Return_Button::create(int X, int Y, int W, int H, const char *L) {
+  if (factory_f) return factory_f(X, Y, W, H, L);
+  else return new Fl_Return_Button(X, Y, W, H, L);
+}
+
 
 
 //
