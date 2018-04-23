@@ -24,9 +24,9 @@
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Toggle_Button.H>
 
-
-Fl_Button::Handle_F* Fl_Button::overridden_handle = NULL;
-Fl_Button::Draw_F*   Fl_Button::overridden_draw   = NULL;
+Fl_Button::Override_Init_F* Fl_Button::overridden_init   = NULL;
+Fl_Button::Handle_F*        Fl_Button::overridden_handle = NULL;
+Fl_Button::Draw_F*          Fl_Button::overridden_draw   = NULL;
 
 Fl_Widget_Tracker *Fl_Button::key_release_tracker = 0;
 
@@ -233,8 +233,9 @@ void Fl_Button::key_release_timeout(void *d)
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
  */
-Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *L)
-: Fl_Widget(X,Y,W,H,L) {
+Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *L,
+                     Fl_Override_Data* override_data)
+: Fl_Widget(X,Y,W,H,L, Fl_Override_Data::init(override_data, overridden_init)) {
   box(FL_UP_BOX);
   down_box(FL_NO_BOX);
   value_ = oldval = 0;

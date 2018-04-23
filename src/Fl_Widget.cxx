@@ -107,7 +107,8 @@ int Fl_Widget::handle(int) {
 /** Default font size for widgets */
 Fl_Fontsize FL_NORMAL_SIZE = 14;
 
-Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
+Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L, 
+                     Fl_Override_Data* override_data) {
 
   x_ = X; y_ = Y; w_ = W; h_ = H;
 
@@ -129,7 +130,8 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   color_	 = FL_GRAY;
   color2_	 = FL_GRAY;
   when_		 = FL_WHEN_RELEASE;
-
+  override_data_ = override_data;
+  
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
   if (!fl_graphics_driver) {
@@ -167,6 +169,7 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
    destroyed destroy all their children. This is convenient and fast.
 */
 Fl_Widget::~Fl_Widget() {
+  if (override_data_) delete override_data_;
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));

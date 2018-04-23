@@ -29,8 +29,9 @@
 #include <FL/fl_draw.H>
 #include "flstring.h"
 
-Fl_Light_Button::Handle_F* Fl_Light_Button::overridden_handle = NULL;
-Fl_Light_Button::Draw_F*   Fl_Light_Button::overridden_draw   = NULL;
+Fl_Light_Button::Override_Init_F* Fl_Light_Button::overridden_init   = NULL;
+Fl_Light_Button::Handle_F*        Fl_Light_Button::overridden_handle = NULL;
+Fl_Light_Button::Draw_F*          Fl_Light_Button::overridden_draw   = NULL;
 
 void Fl_Light_Button::draw() {
   if (overridden_draw == NULL) {
@@ -176,8 +177,8 @@ int Fl_Light_Button::default_handle(int event) {
   position, size, and label string.
   <P>The destructor deletes the check button.
 */
-Fl_Light_Button::Fl_Light_Button(int X, int Y, int W, int H, const char* l)
-: Fl_Button(X, Y, W, H, l) {
+Fl_Light_Button::Fl_Light_Button(int X, int Y, int W, int H, const char* l, Fl_Override_Data* override_data)
+: Fl_Button(X, Y, W, H, l, Fl_Override_Data::init(override_data, overridden_init)) {
   type(FL_TOGGLE_BUTTON);
   selection_color(FL_YELLOW);
   align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);

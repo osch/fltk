@@ -40,11 +40,15 @@ protected:
     typedef int  Handle_F(Fl_Light_Button* w, int);
     typedef void Draw_F(Fl_Light_Button* w);
 private:
-    static Draw_F*   overridden_draw;
-    static Handle_F* overridden_handle;
+    static Override_Init_F* overridden_init;
+    static Draw_F*          overridden_draw;
+    static Handle_F*        overridden_handle;
     void default_draw();
     int default_handle(int);
 protected:
+    static void override_init(Override_Init_F* init_f) {
+      overridden_init = init_f;
+    }
     virtual void draw();
     static void override_draw(Draw_F* draw_f);
     static void default_draw(Fl_Light_Button* w) {
@@ -56,7 +60,7 @@ protected:
     }
 public:
     virtual int handle(int);
-    Fl_Light_Button(int x,int y,int w,int h,const char *l = 0);
+    Fl_Light_Button(int x,int y,int w,int h,const char *l = 0, Fl_Override_Data* override_data = 0);
 };
 
 #endif

@@ -70,6 +70,16 @@ struct FL_EXPORT Fl_Label {
   void measure(int &w, int &h) const ;
 };
 
+class FL_EXPORT Fl_Override_Data {
+public:
+  typedef Fl_Override_Data* Init_F();
+  static Fl_Override_Data* init(Fl_Override_Data* data, Init_F* init_f) {
+    if (data) return data;
+    else if (init_f) return init_f();
+    else return 0;
+  }
+  virtual ~Fl_Override_Data() {}
+};
 
 
 /** Fl_Widget is the base class for all widgets in FLTK.  
@@ -102,14 +112,16 @@ class FL_EXPORT Fl_Widget {
   uchar when_;
 
   const char *tooltip_;
-
+  Fl_Override_Data* override_data_;
+  
   /** unimplemented copy ctor */
   Fl_Widget(const Fl_Widget &);
   /** unimplemented assignment operator */
   Fl_Widget& operator=(const Fl_Widget &);
 
 protected:
-
+  typedef Fl_Override_Data::Init_F Override_Init_F;
+  
   /** Creates a widget at the given position and size.
 
       The Fl_Widget is a protected constructor, but all derived widgets have a 
@@ -120,7 +132,7 @@ protected:
       \param[in] w, h size of the widget in pixels
       \param[in] label optional text for the widget label
    */
-  Fl_Widget(int x, int y, int w, int h, const char *label=0L);
+  Fl_Widget(int x, int y, int w, int h, const char *label=0L, Fl_Override_Data* override_data=0L);
 
   /** Internal use only. Use position(int,int), size(int,int) or resize(int,int,int,int) instead. */
   void x(int v) {x_ = v;}
@@ -176,6 +188,10 @@ protected:
   void draw_focus(Fl_Boxtype t, int x,int y,int w,int h) const;
   void draw_label() const;
   void draw_label(int, int, int, int) const;
+
+  static Fl_Override_Data* override_data(Fl_Widget* w) {
+    return w->override_data_;
+  }
 
 public:
 

@@ -32,20 +32,34 @@
 
 class SpecialClassOverrides : Fl_Button, Fl_Light_Button {
 
-  static Fl_Color mouse_hover_color;
+  struct ButtonOverrideData : public Fl_Override_Data {
+    Fl_Color mouse_hover_color;
+    Fl_Color background_color;
+    ButtonOverrideData() {
+      mouse_hover_color = -1;
+      background_color  = -1;
+    }
+  };
 
-public:
-
+  static Fl_Override_Data* button_init() {
+    return new ButtonOverrideData();
+  }
   static int button_handle(Fl_Button* w, int event) {
-    if (event == FL_ENTER && w->color() != mouse_hover_color) {
-      w->color(mouse_hover_color);
+    ButtonOverrideData* d = (ButtonOverrideData*)Fl_Button::override_data(w);
+    if (d->background_color == -1) {
+      d->background_color = w->color();
+      Fl_Color light_color = fl_contrast(FL_WHITE, FL_FOREGROUND_COLOR);
+      d->mouse_hover_color = fl_color_average(light_color, d->background_color, 0.7);
+    }
+    if (event == FL_ENTER && w->color() != d->mouse_hover_color) {
+      w->color(d->mouse_hover_color);
       if (w->type() != FL_TOGGLE_BUTTON) 
-        w->down_color(mouse_hover_color);
+        w->down_color(d->mouse_hover_color);
       w->redraw();
-    } else if ((event == FL_LEAVE || event == FL_HIDE) && w->color() != FL_BACKGROUND_COLOR) {
-      w->color(FL_BACKGROUND_COLOR);
+    } else if ((event == FL_LEAVE || event == FL_HIDE) && w->color() != d->background_color) {
+      w->color(d->background_color);
       if (w->type() != FL_TOGGLE_BUTTON) 
-        w->down_color(FL_BACKGROUND_COLOR);
+        w->down_color(d->background_color);
       w->redraw();
     }
     return Fl_Button::default_handle(w, event);
@@ -56,16 +70,14 @@ public:
     Fl_Light_Button::default_draw(w);
   }
   
+public:
   static void setup() {
-    Fl_Color light_color = fl_contrast(FL_WHITE, FL_FOREGROUND_COLOR);
-    mouse_hover_color = fl_color_average(light_color, FL_BACKGROUND_COLOR, 0.7);
+    Fl_Button::override_init(&button_init);
     Fl_Button::override_handle(&button_handle);
     Fl_Light_Button::override_draw(&light_button_draw);
   }
 
 };
-
-Fl_Color SpecialClassOverrides::mouse_hover_color = FL_BACKGROUND_COLOR;
 
 
 
@@ -98,6 +110,7 @@ int main(int argc, char ** argv) {
   b1->tooltip("This is a Tooltip.");
   b1->callback(buttoncb, 0);
   b2->callback(buttoncb, 0);
+  b2->color(0x00cc0000);
   window->end();
   window->show();
   return Fl::run();

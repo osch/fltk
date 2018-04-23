@@ -81,8 +81,9 @@ protected:
 
 private:
   
-  static Draw_F*   overridden_draw;
-  static Handle_F* overridden_handle;
+  static Override_Init_F* overridden_init;
+  static Draw_F*          overridden_draw;
+  static Handle_F*        overridden_handle;
   
   int shortcut_;
   char value_;
@@ -97,6 +98,10 @@ protected:
   static Fl_Widget_Tracker *key_release_tracker;
   static void key_release_timeout(void*);
   void simulate_key_action();
+
+  static void override_init(Override_Init_F* init_f) {
+    overridden_init = init_f;
+  }
 
   virtual void draw();
   static void override_draw(Draw_F* draw_f);
@@ -113,7 +118,7 @@ public:
 
   virtual int handle(int);
 
-  Fl_Button(int X, int Y, int W, int H, const char *L = 0);
+  Fl_Button(int X, int Y, int W, int H, const char *L = 0, Fl_Override_Data* override_data = 0);
 
   int value(int v);
 
