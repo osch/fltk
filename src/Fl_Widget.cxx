@@ -185,25 +185,9 @@ Fl_Widget::~Fl_Widget() {
 
 /** Draws a focus box for the widget at the given position and size. */
 
-void Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+void Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H, Fl_Color c) const {
   if (!Fl::visible_focus()) return;
-  switch (B) {
-    case FL_DOWN_BOX:
-    case FL_DOWN_FRAME:
-    case FL_THIN_DOWN_BOX:
-    case FL_THIN_DOWN_FRAME:
-      X ++;
-      Y ++;
-    default:
-      break;
-  }
-  X += Fl::box_dx(B);
-  Y += Fl::box_dy(B);
-  W -= Fl::box_dw(B)+1;
-  H -= Fl::box_dh(B)+1;
-
-  fl_color(fl_contrast(FL_BLACK, color()));
-  fl_focus_rect(X, Y, W, H);
+  fl_focus_rect(B, X, Y, W, H, c);
 }
 
 

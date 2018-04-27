@@ -30,14 +30,16 @@
 #include "flstring.h"
 
 void Fl_Light_Button::draw() {
-  if (box()) draw_box(this==Fl::pushed() ? fl_down(box()) : box(), color());
+  Fl_Boxtype bt = box()?((this==Fl::pushed() && Fl::event_inside(this)) ? fl_down(box()) : box()):box();
+  if (bt) draw_box(bt, color());
   Fl_Color col = value() ? (active_r() ? selection_color() :
                             fl_inactive(selection_color())) : color();
 
   int W  = labelsize();
-  int bx = Fl::box_dx(box());	// box frame width
+  int bx = Fl::box_dx(bt);	// box frame width
+  int by = Fl::box_dy(bt)-Fl::box_dy(box());
   int dx = bx + 2;		// relative position of check mark etc.
-  int dy = (h() - W) / 2;	// neg. offset o.k. for vertical centering
+  int dy = by+(h() - W) / 2;	// neg. offset o.k. for vertical centering
   int lx = 0;			// relative label position (STR #3237)
 
   if (down_box()) {
@@ -122,7 +124,7 @@ void Fl_Light_Button::draw() {
     lx = dx + W + 2;
   } else {
     // if down_box() is zero, draw light button style:
-    int hh = h()-2*dy - 2;
+    int hh = h()-2*(dy-by) - 2;
     int ww = W/2+1;
     int xx = dx;
     if (w()<ww+2*xx) xx = (w()-ww)/2;
@@ -135,8 +137,10 @@ void Fl_Light_Button::draw() {
     }
     lx = dx + ww + 2;
   }
-  draw_label(x()+lx, y(), w()-lx-bx, h());
-  if (Fl::focus() == this) draw_focus();
+  draw_label(x()+lx, y()+Fl::box_dy(bt), w()-(lx-bx)-Fl::box_dw(bt), h()-Fl::box_dh(bt));
+  if (Fl::focus() == this) {
+    draw_focus(bt, color());
+  }
 }
 
 int Fl_Light_Button::handle(int event) {

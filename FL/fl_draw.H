@@ -203,6 +203,16 @@ inline void fl_rect(int x, int y, int w, int h) { fl_graphics_driver->rect(x,y,w
  Draw a dotted rectangle, used to indicate keyboard focus on a widget.
  */
 inline void fl_focus_rect(int x, int y, int w, int h) { fl_graphics_driver->focus_rect(x, y, w, h); }
+
+/**
+ Draws a rectangle used to indicate keyboard focus on a widget. This function
+ considers box type specific focus rectangle drawing functions.
+ The parameter b specifies the boxtype for which the focus rectangle should be drawn.
+ The parameters x,y,w,h,color are the same that are used for drawing the 
+ underlying box.
+ */
+void fl_focus_rect(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color color);
+
 /** Draws with passed color a 1-pixel border \e inside the given bounding box */
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 /** Colors with current color a rectangle that exactly fills the given bounding box */

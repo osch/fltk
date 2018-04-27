@@ -40,14 +40,20 @@ int fl_return_arrow(int x, int y, int w, int h) {
 
 void Fl_Return_Button::draw() {
   if (type() == FL_HIDDEN_BUTTON) return;
+  Fl_Color col = value() ? selection_color() : color();
   Fl_Boxtype bt = value() ? (down_box()?down_box():fl_down(box())) : box();
   int dx = Fl::box_dx(bt);
-  draw_box(bt, value() ? selection_color() : color());
-  int W = h();
+  int dy = Fl::box_dy(bt);
+  int dw = Fl::box_dw(bt);
+  int dh = Fl::box_dh(bt);
+  draw_box(bt, col);
+  int ady = 2;
+  int adh = 2*ady;
+  int W = h()-dh+adh;
   if (w()/3 < W) W = w()/3;
-  fl_return_arrow(x()+w()-(W+dx), y(), W, h());
-  draw_label(x()+dx, y(), w()-(dx+W+dx), h());
-  if (Fl::focus() == this) draw_focus();
+  fl_return_arrow(x()+dx+w()-(W+dw+ady), y()+dy-ady, W, h()-dh+adh);
+  draw_label(x()+dx, y()+dy, w()-(dw+W), h()-dh);
+  if (Fl::focus() == this) draw_focus(bt, col);
 }
 
 int Fl_Return_Button::handle(int event) {

@@ -172,9 +172,17 @@ protected:
   void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;
   void draw_backdrop() const;
   /** draws a focus rectangle around the widget */
-  void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
-  void draw_focus(Fl_Boxtype t, int x,int y,int w,int h) const;
-  void draw_label() const;
+  void draw_focus() {draw_focus(box(),x(),y(),w(),h(),color());}
+  void draw_focus(Fl_Boxtype t, Fl_Color c) {draw_focus(t,x(),y(),w(),h(),c);}
+  void draw_focus(Fl_Boxtype t, int x,int y,int w,int h) {draw_focus(t,x,y,w,h,color());}
+  /** Draws a rectangle used to indicate keyboard focus on a widget.
+      The parameter t specifies the boxtype for which the focus rectangle should be drawn.
+      The parameters x,y,w,h,c should the same that are used for drawing the 
+      underlying box.
+   */
+  void draw_focus(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;
+  void draw_label() {draw_label(box());}
+  void draw_label(Fl_Boxtype t) const;
   void draw_label(int, int, int, int) const;
 
 public:

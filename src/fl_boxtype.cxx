@@ -285,6 +285,7 @@ static struct {
   Fl_Box_Draw_F *f;
   uchar dx, dy, dw, dh;
   int set;
+  Fl_Box_Draw_F *focus_rect_f;
 } fl_box_table[256] = {
 // must match list in Enumerations.H!!!
   {fl_no_box,		0,0,0,0,1},
@@ -318,7 +319,7 @@ static struct {
   {fl_border_frame,	1,1,2,2,0}, // _FL_OVAL_FRAME
   {fl_flat_box,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
   {fl_up_box,		4,4,8,8,0}, // _FL_PLASTIC_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX
+  {fl_down_box,		4,4,8,8,0}, // _FL_PLASTIC_DOWN_BOX
   {fl_up_frame,		2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME
   {fl_down_frame,	2,2,4,4,0}, // _FL_PLASTIC_DOWN_FRAME
   {fl_up_box,		2,2,4,4,0}, // _FL_PLASTIC_THIN_UP_BOX
@@ -412,21 +413,39 @@ void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
 Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
   return fl_box_table[t].f;
 }
-/** Sets the function to call to draw a specific boxtype. */
+/** Gets the current focus rect drawing function for the specified box type.
+    Returns 0 if default focus rect drawing function is used.
+ */
+Fl_Box_Draw_F *Fl::get_focus_rect(Fl_Boxtype t) {
+  return fl_box_table[t].focus_rect_f;
+}
+/** Sets the function to call to draw a specific boxtype. 
+    \param[in] t box type
+    \param[in] f box drawing functions
+    \param[in] dx, dy, dw, dh offsets for content drawing inside boxtype
+    \param[in] focus_rect_f function for drawing the focus rectangle for 
+               the given boxtype. If 0, the default focus rectangle is drawn.
+               This function gets the same parameter than the given box type
+               drawing function for the underlying box.
+ */
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
-		      uchar a, uchar b, uchar c, uchar d) {
+		      uchar dx, uchar dy, uchar dw, uchar dh,
+		      Fl_Box_Draw_F focus_rect_f) {
   fl_box_table[t].f   = f;
   fl_box_table[t].set = 1;
-  fl_box_table[t].dx  = a;
-  fl_box_table[t].dy  = b;
-  fl_box_table[t].dw  = c;
-  fl_box_table[t].dh  = d;
+  fl_box_table[t].dx  = dx;
+  fl_box_table[t].dy  = dy;
+  fl_box_table[t].dw  = dw;
+  fl_box_table[t].dh  = dh;
+  fl_box_table[t].focus_rect_f = focus_rect_f;
 }
 /** Copies the from boxtype. */
 void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
   fl_box_table[to] = fl_box_table[from];
 }
-
+void Fl::set_focus_rect(Fl_Boxtype t, Fl_Box_Draw_F* focus_rect_f) {
+  fl_box_table[t].focus_rect_f  = focus_rect_f;
+}
 /**
   Draws a box using given type, position, size and color.
   \param[in] t box type
@@ -463,6 +482,38 @@ void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) c
   draw_it_active = active_r();
   fl_box_table[t].f(X, Y, W, H, c);
   draw_it_active = 1;
+}
+
+void fl_focus_rect(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color color) {
+  Fl_Box_Draw_F *draw_f = fl_box_table[b].focus_rect_f;
+  if (draw_f) {
+    draw_f(x, y, w, h, color);
+  } else {
+    // In FLTK 1.3 the down box type was not considered here
+    // (Fl_Button just invoked this function with the non pressed box_type).
+    // For maximal compatibility wie deduce the up box here from the
+    // current boxtype (TODO: removing this line seems more correct).
+    b = (Fl_Boxtype)((b<FL_UP_BOX)?b:(b&~1));
+    
+    // original code from Fl_Widget::draw_focus
+    switch (b) {
+      case FL_DOWN_BOX:
+      case FL_DOWN_FRAME:
+      case FL_THIN_DOWN_BOX:
+      case FL_THIN_DOWN_FRAME:
+        x ++;
+        y ++;
+      default:
+        break;
+    }
+    x += Fl::box_dx(b);
+    y += Fl::box_dy(b);
+    w -= Fl::box_dw(b)+1;
+    h -= Fl::box_dh(b)+1;
+  
+    fl_color(fl_contrast(FL_BLACK, color));
+    fl_focus_rect(x, y, w, h);
+  }
 }
 
 //

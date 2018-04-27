@@ -1097,8 +1097,10 @@ int main() {
 
   // boxtypes:
   static Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);
-  static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar);
+  static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar,Fl_Box_Draw_F* = 0);
   static void set_boxtype(Fl_Boxtype, Fl_Boxtype from);
+  static void set_focus_rect(Fl_Boxtype, Fl_Box_Draw_F*);
+  static Fl_Box_Draw_F *get_focus_rect(Fl_Boxtype);
   static int box_dx(Fl_Boxtype);
   static int box_dy(Fl_Boxtype);
   static int box_dw(Fl_Boxtype);
